@@ -1,27 +1,29 @@
-import { Router } from "express";
-import UserManager from '../../data/users.manager';
-import isValidUserData from '../../middlewares/IsValidUserData.mid';
-import errorHandler from '../../middlewares/errorHandler.mid';
+// src/routers/api/users.api.js
+import express from 'express';
+import UserManager from '../../data/users.manager.js'; // Ensure correct import
+import isValidUserData from '../../middlewares/isValidUserData.mid.js';
+import errorHandler from '../../middlewares/errorHandler.mid.js';
 
-const usersApiRouter = Router()
+const router = express.Router();
+const userManager = new UserManager(); // Create an instance of the class
 
 // POST /api/users endpoint
-usersApiRouter.post('/', isValidUserData, (req, res) => {
+router.post('/', isValidUserData, (req, res) => {
   try {
-	const newUser = UserManager.create(req.body);
-	res.status(201).json({
-	  id: newUser.id,
-	  message: 'User successfully created'
-	});
+    const newUser = userManager.create(req.body);
+    res.status(201).json({
+      id: newUser.id,
+      message: 'User successfully created'
+    });
   } catch (err) {
-	errorHandler(err, req, res);
+    errorHandler(err, req, res);
   }
 });
 
 // GET /api/users endpoint
-usersApiRouter.get('/', (req, res) => {
+router.get('/', (req, res) => {
   try {
-    const users = UserManager.read();
+    const users = userManager.read();
     res.status(200).json({
       statusCode: 200,
       response: users
@@ -32,9 +34,9 @@ usersApiRouter.get('/', (req, res) => {
 });
 
 // GET /api/users/:uid endpoint
-usersApiRouter.get('/:uid', (req, res) => {
+router.get('/:uid', (req, res) => {
   try {
-    const user = UserManager.readOne(req.params.uid);
+    const user = userManager.readOne(req.params.uid);
     if (user) {
       res.status(200).json(user);
     } else {
@@ -46,11 +48,14 @@ usersApiRouter.get('/:uid', (req, res) => {
 });
 
 // PUT /api/users/:uid endpoint
-usersApiRouter.put('/:uid', isValidUserData, (req, res) => {
+router.put('/:uid', isValidUserData, (req, res) => {
   try {
-    const updatedUser = UserManager.update(req.params.uid, req.body);
+    const updatedUser = userManager.update(req.params.uid, req.body);
     if (updatedUser) {
-      res.status(200).json(updatedUser);
+      res.status(200).json({
+        statusCode: 200,
+        response: updatedUser
+      });
     } else {
       res.status(404).json({ message: 'User not found' });
     }
@@ -60,11 +65,14 @@ usersApiRouter.put('/:uid', isValidUserData, (req, res) => {
 });
 
 // DELETE /api/users/:uid endpoint
-usersApiRouter.delete('/:uid', (req, res) => {
+router.delete('/:uid', (req, res) => {
   try {
-    const deletedUser = UserManager.delete(req.params.uid);
-    if (deletedUser) {
-      res.status(200).json({ message: 'User successfully deleted' });
+    const isDeleted = userManager.destroy(req.params.uid);
+    if (isDeleted) {
+      res.status(200).json({
+        statusCode: 200,
+        message: 'User successfully deleted'
+      });
     } else {
       res.status(404).json({ message: 'User not found' });
     }
@@ -73,8 +81,4 @@ usersApiRouter.delete('/:uid', (req, res) => {
   }
 });
 
-
-
-//definir las rutas correspondientes y luego exportar
-
-export default usersApiRouter
+export default router;

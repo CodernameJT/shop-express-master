@@ -1,23 +1,10 @@
-import { Router } from "express";
-import productsRouter from "./products.api.js";
-import usersApiRouter from "./users.api.js";
-import cartsApiRouter from "./carts.api.js";
+import express from 'express';
+import productsApiRouter from './products.api.js'; // Ensure .js extension
+import usersApiRouter from './users.api.js'; // Ensure .js extension
 
-const apiRouter = Router();
+const apiRouter = express.Router();
 
-// src/routers/api/index.api.js
-const express = require('express');
-const router = express.Router();
+apiRouter.use('/products', productsApiRouter);
+apiRouter.use('/users', usersApiRouter);
 
-router.use('/products', require('./products.api'));
-router.use('/users', require('./users.api'));
-// Add other routes here
-
-module.exports = router;
-
-/*
-apiRouter.use("/products", productsRouter);
-apiRouter.use("/carts", cartsApiRouter);
-apiRouter.use("/users", usersApiRouter);
-*/
 export default apiRouter;

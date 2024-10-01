@@ -1,6 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const { randomBytes } = require('crypto');
+// src/data/users.manager.js
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { randomBytes } from 'crypto';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const filePath = path.join(__dirname, 'files', 'users.json');
 
@@ -45,4 +50,4 @@ class UserManager {
   }
 }
 
-module.exports = new UserManager();
+export default UserManager;
